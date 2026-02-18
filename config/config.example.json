@@ -82,8 +82,8 @@
       "api_base": ""
     },
     "openrouter": {
-      "api_key": "sk-or-v1-xxx",
-      "api_base": ""
+      "api_key": "sk-",
+      "api_base": "https://openrouter.ai/api/v1"
     },
     "groq": {
       "api_key": "gsk_xxx",
