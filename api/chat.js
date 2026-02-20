@@ -3,11 +3,31 @@ import { groq } from '@ai-sdk/groq';
 import { openai } from '@ai-sdk/openai';
 import { generateText, streamText } from 'ai';
 
-// Configuración de providers
-const providers = {
-  openai: openai('gpt-4-turbo'),
-  anthropic: anthropic('claude-3-sonnet-20240229'),
-  groq: groq('mixtral-8x7b-32768')
+// Configuración de providers con manejo de errores
+const providers = {};
+
+try {
+  if (process.env.OPENAI_API_KEY) {
+    providers.openai = openai('gpt-4-turbo');
+  }
+  if (process.env.ANTHROPIC_API_KEY) {
+    providers.anthropic = anthropic('claude-3-sonnet-20240229');
+  }
+  if (process.env.GROQ_API_KEY) {
+    providers.groq = groq('mixtral-8x7b-32768');
+  }
+} catch (error) {
+  console.error('Error initializing AI providers:', error);
+}
+
+// Proveedor mock para desarrollo
+const mockProvider = {
+  generateText: async ({ messages }) => {
+    const lastMessage = messages[messages.length - 1]?.content || 'Hello';
+    return {
+      text: `Mock AI response to: "${lastMessage}". This is a development environment response.`
+    };
+  }
 };
 
 // Sistema de autenticación simple
@@ -47,7 +67,6 @@ export async function POST(request) {
     }), {
       headers: { 'Content-Type': 'application/json' }
     });
-
   } catch (error) {
     console.error('Error en chat:', error);
     return new Response(JSON.stringify({ error: 'Error procesando mensaje' }), {
@@ -71,7 +90,7 @@ export async function GET(request) {
 
   try {
     const result = await streamText({
-      model: providers[provider],
+      model: providers[provider] || mockProvider,
       messages: [{ role: 'user', content: message }],
       maxTokens: 1000,
       temperature: 0.7,
@@ -91,9 +110,12 @@ async function processChatMessage(message, provider, sessionId) {
   // Obtener contexto de la conversación
   const context = getConversationContext(sessionId);
   
+  // Usar provider disponible o mock
+  const aiProvider = providers[provider] || mockProvider;
+  
   // Generar respuesta
   const result = await generateText({
-    model: providers[provider],
+    model: aiProvider,
     messages: [
       { role: 'system', content: getSystemPrompt() },
       ...context,
@@ -110,7 +132,7 @@ async function processChatMessage(message, provider, sessionId) {
 }
 
 /**
- * Manejar acciones de administrador
+ * Handler para acciones de administrador
  */
 function handleAdminAction(action, credentials) {
   if (action === 'admin_login') {
@@ -153,54 +175,38 @@ function handleAdminAction(action, credentials) {
 function getConversationContext(sessionId) {
   if (!sessionId) return [];
   
-  const conversation = conversationFlows.get(sessionId);
-  if (!conversation) return [];
+  const session = userSessions.get(sessionId);
+  if (!session) return [];
   
   // Retornar últimos 10 mensajes
-  return conversation.messages.slice(-10).map(msg => ({
+  return session.messages.slice(-10).map(msg => ({
     role: msg.role,
     content: msg.content
   }));
 }
 
 /**
- * Guardar mensaje en conversación
+ * Guardar en conversación
  */
 function saveToConversation(sessionId, userMessage, aiResponse) {
   if (!sessionId) return;
   
-  let conversation = conversationFlows.get(sessionId);
-  if (!conversation) {
-    conversation = {
-      sessionId,
+  if (!userSessions.has(sessionId)) {
+    userSessions.set(sessionId, {
       messages: [],
-      createdAt: Date.now(),
-      lastActivity: Date.now()
-    };
-    conversationFlows.set(sessionId, conversation);
+      createdAt: Date.now()
+    });
   }
   
-  conversation.messages.push(
+  const session = userSessions.get(sessionId);
+  session.messages.push(
     { role: 'user', content: userMessage, timestamp: Date.now() },
     { role: 'assistant', content: aiResponse, timestamp: Date.now() }
   );
-  conversation.lastActivity = Date.now();
   
-  // Limpiar conversaciones antiguas (más de 24 horas)
-  cleanupOldConversations();
-}
-
-/**
- * Limpiar conversaciones antiguas
- */
-function cleanupOldConversations() {
-  const now = Date.now();
-  const maxAge = 24 * 60 * 60 * 1000; // 24 horas
-  
-  for (const [sessionId, conversation] of conversationFlows.entries()) {
-    if (now - conversation.lastActivity > maxAge) {
-      conversationFlows.delete(sessionId);
-    }
+  // Limpiar mensajes antiguos (mantener últimos 50)
+  if (session.messages.length > 50) {
+    session.messages = session.messages.slice(-50);
   }
 }
 
@@ -235,7 +241,8 @@ export async function GET(request) {
         chat: true,
         whatsapp: true,
         admin: true,
-        ai_providers: ['openai', 'anthropic', 'groq']
+        ai_providers: Object.keys(providers),
+        mock_mode: Object.keys(providers).length === 0
       }
     }), {
       headers: { 'Content-Type': 'application/json' }

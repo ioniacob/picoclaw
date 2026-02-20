@@ -58,3 +58,4 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 translate_comments.sh
+.env*.local

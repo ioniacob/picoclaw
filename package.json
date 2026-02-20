@@ -4,10 +4,12 @@
   "description": "PicoClaw with Vercel Chat SDK for automated WhatsApp flows",
   "main": "api/chat.js",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node test-server.js",
+    "vercel:dev": "vercel dev --local-config vercel.dev.json",
     "build": "echo 'Build completed - Vercel handles this automatically'",
     "deploy": "vercel deploy",
-    "deploy:prod": "vercel deploy --prod"
+    "deploy:prod": "vercel deploy --prod",
+    "start": "node test-server.js"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.51",
@@ -15,7 +17,8 @@
     "@ai-sdk/openai": "^0.0.66",
     "ai": "^3.4.7",
     "bcryptjs": "^2.4.3",
-    "express": "^4.18.2",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
     "jsonwebtoken": "^9.0.2",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.23.0",
@@ -23,7 +26,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "vercel": "^50.22.0"
+    "vercel": "^50.5.0"
   },
   "engines": {
     "node": ">=18.0.0"
