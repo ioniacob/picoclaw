@@ -1,29 +1,29 @@
 {
   "name": "picoclaw-vercel-chat",
   "version": "1.0.0",
-  "description": "PicoClaw con Vercel Chat SDK para flujos automáticos de WhatsApp",
+  "description": "PicoClaw with Vercel Chat SDK for automated WhatsApp flows",
   "main": "api/chat.js",
   "scripts": {
     "dev": "vercel dev",
-    "build": "vercel build",
+    "build": "echo 'Build completed - Vercel handles this automatically'",
     "deploy": "vercel deploy",
     "deploy:prod": "vercel deploy --prod"
   },
   "dependencies": {
-    "ai": "^3.0.0",
-    "@ai-sdk/openai": "^0.0.0",
-    "@ai-sdk/anthropic": "^0.0.0",
-    "@ai-sdk/groq": "^0.0.0",
-    "whatsapp-web.js": "^1.23.0",
-    "ws": "^8.14.2",
+    "@ai-sdk/anthropic": "^0.0.51",
+    "@ai-sdk/groq": "^0.0.3",
+    "@ai-sdk/openai": "^0.0.66",
+    "ai": "^3.4.7",
+    "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
-    "qrcode-terminal": "^0.12.0",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.23.0",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "vercel": "^33.0.0"
+    "vercel": "^50.22.0"
   },
   "engines": {
     "node": ">=18.0.0"

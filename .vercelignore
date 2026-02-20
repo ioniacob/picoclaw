@@ -1,0 +1,55 @@
+# Vercel ignore file - exclude unnecessary files from deployment
+
+# Go build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# Go modules
+/go.sum
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Documentation (keep only essential)
+README_ES.md
+translate_comments.sh
+
+# Test files (keep for local development)
+*test.go
+*test.js
+
+# Config templates
+.env.vercel
+deploy_vercel.sh
+quick_deploy.sh
+
+# Project management
+PROJECT_COMPLETE.md
+VERCEL_DEPLOY.md
+COMMIT_MESSAGE.md

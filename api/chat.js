@@ -1,6 +1,6 @@
-import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { groq } from '@ai-sdk/groq';
+import { openai } from '@ai-sdk/openai';
 import { generateText, streamText } from 'ai';
 
 // Configuración de providers
@@ -216,6 +216,44 @@ function generateSessionId() {
  */
 function generateAdminToken() {
   return 'admin_' + Math.random().toString(36).substr(2, 16);
+}
+
+/**
+ * Handler GET para health checks y root path
+ */
+export async function GET(request) {
+  const url = new URL(request.url);
+  
+  // Health check endpoint
+  if (url.pathname === '/health' || url.pathname === '/') {
+    return new Response(JSON.stringify({
+      status: 'healthy',
+      service: 'PicoClaw WhatsApp AI Integration',
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      features: {
+        chat: true,
+        whatsapp: true,
+        admin: true,
+        ai_providers: ['openai', 'anthropic', 'groq']
+      }
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  // Default response for unknown GET paths
+  return new Response(JSON.stringify({
+    message: 'PicoClaw WhatsApp AI Integration API',
+    endpoints: {
+      chat: '/api/chat',
+      whatsapp: '/api/whatsapp', 
+      admin: '/admin',
+      health: '/health'
+    }
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
 
 /**
