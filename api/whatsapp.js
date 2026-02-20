@@ -1,4 +1,5 @@
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
@@ -75,6 +76,20 @@ async function handleGet(req, res) {
         message: 'WhatsApp está conectado'
       });
 
+    case 'facebook_config':
+      return res.status(200).json({
+        required_env_vars: [
+          'PICOCLAW_CHANNELS_WHATSAPP_FB_PHONE_NUMBER_ID',
+          'PICOCLAW_CHANNELS_WHATSAPP_FB_ACCESS_TOKEN',
+          'PICOCLAW_CHANNELS_WHATSAPP_FB_API_VERSION'
+        ],
+        current_config: {
+          phone_number_id: process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_PHONE_NUMBER_ID || 'not_set',
+          api_version: process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_API_VERSION || 'v22.0',
+          enabled: !!process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_PHONE_NUMBER_ID && !!process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_ACCESS_TOKEN
+        }
+      });
+
     default:
       return res.status(200).json({
         service: 'PicoClaw WhatsApp AI',
@@ -94,6 +109,11 @@ async function handleGet(req, res) {
  */
 async function handlePost(req, res) {
   const { action, data } = req.body;
+  
+  // Check if this is an admin login request from URL path
+  if (req.url && req.url.includes('/admin/login')) {
+    return handleAdminLogin(data, res);
+  }
 
   switch (action) {
     case 'admin_login':
@@ -107,6 +127,9 @@ async function handlePost(req, res) {
     
     case 'webhook':
       return handleWebhook(data, res);
+    
+    case 'test_facebook_api':
+      return handleFacebookAPITest(data, res);
     
     default:
       return res.status(400).json({ error: 'Acción no válida' });
@@ -275,4 +298,51 @@ function getSystemPrompt() {
  */
 function generateToken() {
   return 'admin_' + Math.random().toString(36).substr(2, 16);
+}
+
+/**
+ * Test Facebook WhatsApp Business API
+ */
+async function handleFacebookAPITest(data, res) {
+  const { phone_number_id, access_token, to, template_name, language_code } = data;
+  
+  // Use provided credentials or fall back to environment variables
+  const phoneNumberId = phone_number_id || process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_PHONE_NUMBER_ID;
+  const accessToken = access_token || process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_ACCESS_TOKEN;
+  const apiVersion = process.env.PICOCLAW_CHANNELS_WHATSAPP_FB_API_VERSION || 'v22.0';
+  
+  if (!phoneNumberId || !accessToken) {
+    return res.status(400).json({
+      error: 'Missing Facebook WhatsApp credentials',
+      details: 'Provide phone_number_id and access_token in request or set environment variables'
+    });
+  }
+  
+  try {
+    // In production, this would make a real API call to Facebook Graph API
+    // For now, return a mock response to validate the setup
+    const mockResponse = {
+      success: true,
+      provider: 'facebook_whatsapp_business_api',
+      messageId: 'fb_msg_' + Date.now(),
+      status: 'sent',
+      timestamp: Date.now(),
+      details: {
+        phone_number_id: phoneNumberId,
+        recipient: to || 'RECIPIENT_PHONE_NUMBER',
+        template_name: template_name || 'hello_world',
+        language_code: language_code || 'en_US',
+        api_version: apiVersion
+      },
+      note: 'This is a mock response. In production this would send via Facebook Graph API.'
+    };
+    
+    return res.status(200).json(mockResponse);
+  } catch (error) {
+    console.error('Facebook API test error:', error);
+    return res.status(500).json({
+      error: 'Facebook API test failed',
+      details: error.message
+    });
+  }
 }

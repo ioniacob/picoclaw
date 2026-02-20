@@ -1,6 +1,9 @@
 # Vercel ignore file - exclude unnecessary files from deployment
 
-# Go build artifacts
+# Go files and build artifacts
+*.go
+go.mod
+go.sum
 *.exe
 *.dll
 *.so

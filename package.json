@@ -2,6 +2,7 @@
   "name": "picoclaw-vercel-chat",
   "version": "1.0.0",
   "description": "PicoClaw with Vercel Chat SDK for automated WhatsApp flows",
+  "type": "module",
   "main": "api/chat.js",
   "scripts": {
     "dev": "node test-server.js",
