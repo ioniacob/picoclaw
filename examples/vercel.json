@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "name": "picoclaw-whatsapp-bridge",
+  "builds": [
+    {
+      "src": "whatsapp-bridge.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/whatsapp-bridge.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "version": 2,
+  "name": "picoclaw-vercel",
+  "builds": [
+    {
+      "src": "api/index.go",
+      "use": "@vercel/go"
+    },
+    {
+      "src": "api/chat.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/whatsapp.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "admin/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "/api/chat.js"
+    },
+    {
+      "src": "/api/whatsapp",
+      "dest": "/api/whatsapp.js"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.go"
+    }
+  ],
+  "env": {
+    "CONFIG_PATH": "/tmp/config.json",
+    "NODE_ENV": "production",
+    "ADMIN_USERNAME": "admin",
+    "ADMIN_PASSWORD": "picoclaw123"
+  },
+  "functions": {
+    "api/index.go": {
+      "runtime": "go1.x"
+    },
+    "api/chat.js": {
+      "maxDuration": 30
+    },
+    "api/whatsapp.js": {
+      "maxDuration": 30
+    }
+  }
+}

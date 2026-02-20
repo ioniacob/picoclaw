@@ -1,0 +1,33 @@
+{
+  "name": "picoclaw-whatsapp-bridge",
+  "version": "1.0.0",
+  "description": "Bridge WebSocket para WhatsApp - Compatible con PicoClaw",
+  "main": "whatsapp-bridge.js",
+  "scripts": {
+    "start": "node whatsapp-bridge.js",
+    "dev": "nodemon whatsapp-bridge.js",
+    "vercel-build": "echo 'No build needed'",
+    "vercel-dev": "vercel dev"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.0",
+    "ws": "^8.14.2",
+    "express": "^4.18.2",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "whatsapp",
+    "websocket",
+    "bridge",
+    "picoclaw",
+    "bot"
+  ],
+  "author": "PicoClaw Team",
+  "license": "MIT"
+}

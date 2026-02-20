@@ -1,0 +1,66 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/tmp/workspace",
+      "restrict_to_workspace": true,
+      "model": "glm-4.7",
+      "max_tokens": 4096,
+      "temperature": 0.7,
+      "max_tool_iterations": 10
+    }
+  },
+  "channels": {
+    "whatsapp": {
+      "enabled": true,
+      "bridge_url": "wss://api.whatsapp.com/v1",
+      "allow_from": []
+    },
+    "telegram": {
+      "enabled": false,
+      "token": "",
+      "allow_from": []
+    },
+    "discord": {
+      "enabled": false,
+      "token": "",
+      "allow_from": []
+    },
+    "slack": {
+      "enabled": false,
+      "bot_token": "",
+      "app_token": "",
+      "allow_from": []
+    }
+  },
+  "providers": {
+    "openrouter": {
+      "api_key": "",
+      "api_base": "https://openrouter.ai/api/v1"
+    },
+    "anthropic": {
+      "api_key": "",
+      "api_base": ""
+    },
+    "openai": {
+      "api_key": "",
+      "api_base": ""
+    }
+  },
+  "tools": {
+    "cron": {
+      "exec_timeout_minutes": 2
+    }
+  },
+  "heartbeat": {
+    "enabled": false,
+    "interval": 30
+  },
+  "devices": {
+    "enabled": false,
+    "monitor_usb": false
+  },
+  "gateway": {
+    "host": "0.0.0.0",
+    "port": 8080
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "name": "picoclaw-dev",
+  "builds": [
+    {
+      "src": "api/chat.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/whatsapp.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "admin/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "/api/chat.js"
+    },
+    {
+      "src": "/api/whatsapp",
+      "dest": "/api/whatsapp.js"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/admin/index.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    },
+    "api/whatsapp.js": {
+      "maxDuration": 30
+    }
+  }
+}
